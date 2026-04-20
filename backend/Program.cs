@@ -60,11 +60,36 @@ builder.Services.AddCors(opt => opt.AddDefaultPolicy(p =>
 // ── App pipeline ──────────────────────────────────────────────────────────
 var app = builder.Build();
 
-// Auto-migrate on startup
+// Auto-migrate + seed admin on startup
 using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
     db.Database.Migrate();
+
+    const string adminEmail = "icaro.costa@gmail.com";
+    if (!db.Users.Any(u => u.Email == adminEmail))
+    {
+        db.Users.Add(new NeuroMentor.Api.Models.User
+        {
+            Name = "Ícaro Costa",
+            Email = adminEmail,
+            PasswordHash = BCrypt.Net.BCrypt.HashPassword("13052891idI"),
+            Role = NeuroMentor.Api.Models.UserRole.Teacher,
+            IsAiEnabled = true,
+            IsAdmin = true,
+        });
+        db.SaveChanges();
+    }
+    else
+    {
+        var admin = db.Users.First(u => u.Email == adminEmail);
+        if (!admin.IsAdmin || !admin.IsAiEnabled)
+        {
+            admin.IsAdmin = true;
+            admin.IsAiEnabled = true;
+            db.SaveChanges();
+        }
+    }
 }
 
 app.UseCors();
