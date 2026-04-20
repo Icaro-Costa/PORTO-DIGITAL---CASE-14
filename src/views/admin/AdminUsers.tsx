@@ -105,7 +105,7 @@ export default function AdminUsers() {
         {tab === "users" && (
           <button onClick={() => setShowCreate(true)}
             className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold text-white"
-            style={{ background: "var(--nm-accent, #6366f1)" }}>
+            style={{ background: "var(--nm-purple)" }}>
             <Plus size={16} /> Criar Admin
           </button>
         )}
@@ -120,12 +120,12 @@ export default function AdminUsers() {
       </div>
 
       {/* Tabs */}
-      <div className="flex gap-1 mb-6 p-1 rounded-xl w-fit" style={{ background: "var(--nm-bg-card)" }}>
+      <div className="flex gap-1 mb-6 p-1 rounded-xl w-fit" style={{ background: "var(--nm-bg-surface)" }}>
         {(["users", "pdfs"] as const).map((t) => (
           <button key={t} onClick={() => setTab(t)}
             className="px-5 py-2 rounded-lg text-sm font-medium transition-all"
             style={tab === t
-              ? { background: "var(--nm-accent, #6366f1)", color: "white" }
+              ? { background: "var(--nm-purple)", color: "white" }
               : { color: "var(--nm-text-muted)" }}>
             {t === "users" ? "Usuários" : "PDFs"}
           </button>
@@ -139,10 +139,10 @@ export default function AdminUsers() {
             <input type="text" placeholder="Buscar por nome ou e-mail..."
               value={search} onChange={(e) => setSearch(e.target.value)}
               className="w-full pl-4 pr-4 py-3 rounded-xl text-sm outline-none"
-              style={{ background: "var(--nm-bg-card)", border: "1px solid var(--nm-border)", color: "var(--nm-text)" }} />
+              style={{ background: "var(--nm-bg-surface)", border: "1px solid var(--nm-border)", color: "var(--nm-text)" }} />
           </div>
 
-          <div className="rounded-2xl overflow-hidden" style={{ background: "var(--nm-bg-card)", border: "1px solid var(--nm-border)" }}>
+          <div className="rounded-2xl overflow-hidden" style={{ background: "var(--nm-bg-surface)", border: "1px solid var(--nm-border)" }}>
             {loading ? <Spinner /> : users.length === 0 ? <Empty text="Nenhum usuário encontrado" /> : (
               <table className="w-full">
                 <thead>
@@ -159,7 +159,7 @@ export default function AdminUsers() {
                       <td className="px-5 py-4">
                         <div className="flex items-center gap-3">
                           <div className="w-9 h-9 rounded-full flex items-center justify-center text-sm font-bold shrink-0 text-white"
-                            style={{ background: user.isAiEnabled ? "var(--nm-accent, #6366f1)" : "var(--nm-bg-deep)" }}>
+                            style={{ background: user.isAiEnabled ? "var(--nm-purple)" : "var(--nm-bg-deep)" }}>
                             {user.name.charAt(0).toUpperCase()}
                           </div>
                           <div>
@@ -174,7 +174,7 @@ export default function AdminUsers() {
                       <td className="px-5 py-4">
                         <span className="text-xs px-2.5 py-1 rounded-full font-medium"
                           style={user.role === "teacher"
-                            ? { background: "rgba(99,102,241,0.15)", color: "#818cf8" }
+                            ? { background: "rgba(124,58,237,0.15)", color: "var(--nm-purple-light)" }
                             : { background: "rgba(16,185,129,0.15)", color: "#34d399" }}>
                           {user.role === "teacher" ? "Professor" : "Aluno"}
                         </span>
@@ -185,7 +185,7 @@ export default function AdminUsers() {
                       <td className="px-5 py-4">
                         <button onClick={() => toggleAi(user)} disabled={toggling === user.id}
                           className="relative w-12 h-6 rounded-full transition-all duration-300 focus:outline-none disabled:opacity-50"
-                          style={{ background: user.isAiEnabled ? "var(--nm-accent, #6366f1)" : "var(--nm-bg-deep)", border: "1px solid var(--nm-border)" }}>
+                          style={{ background: user.isAiEnabled ? "var(--nm-purple)" : "var(--nm-bg-deep)", border: "1px solid var(--nm-border)" }}>
                           <span className="absolute top-0.5 w-5 h-5 rounded-full bg-white shadow transition-all duration-300"
                             style={{ left: user.isAiEnabled ? "calc(100% - 1.375rem)" : "0.125rem" }} />
                         </button>
@@ -210,7 +210,7 @@ export default function AdminUsers() {
 
       {/* PDFs tab */}
       {tab === "pdfs" && (
-        <div className="rounded-2xl overflow-hidden" style={{ background: "var(--nm-bg-card)", border: "1px solid var(--nm-border)" }}>
+        <div className="rounded-2xl overflow-hidden" style={{ background: "var(--nm-bg-surface)", border: "1px solid var(--nm-border)" }}>
           {loading ? <Spinner /> : lessons.length === 0 ? <Empty text="Nenhum material encontrado" /> : (
             <table className="w-full">
               <thead>
@@ -317,7 +317,7 @@ export default function AdminUsers() {
             </button>
             <button onClick={createAdmin} disabled={creating}
               className="flex-1 py-2 rounded-xl text-sm font-semibold text-white disabled:opacity-50"
-              style={{ background: "var(--nm-accent, #6366f1)" }}>
+              style={{ background: "var(--nm-purple)" }}>
               {creating ? "Criando..." : "Criar"}
             </button>
           </div>
@@ -330,10 +330,10 @@ export default function AdminUsers() {
 function StatCard({ label, value, icon, accent }: { label: string; value: number | string; icon: React.ReactNode; accent?: boolean }) {
   return (
     <div className="rounded-2xl p-5" style={{
-      background: accent ? "rgba(99,102,241,0.1)" : "var(--nm-bg-card)",
-      border: `1px solid ${accent ? "rgba(99,102,241,0.3)" : "var(--nm-border)"}`,
+      background: accent ? "rgba(99,102,241,0.1)" : "var(--nm-bg-surface)",
+      border: `1px solid ${accent ? "rgba(124,58,237,0.3)" : "var(--nm-border)"}`,
     }}>
-      <div className="mb-2" style={{ color: accent ? "#818cf8" : "var(--nm-text-muted)" }}>{icon}</div>
+      <div className="mb-2" style={{ color: accent ? "var(--nm-purple-light)" : "var(--nm-text-muted)" }}>{icon}</div>
       <div className="text-2xl font-bold text-white">{value}</div>
       <div className="text-xs mt-1" style={{ color: "var(--nm-text-muted)" }}>{label}</div>
     </div>
@@ -343,7 +343,7 @@ function StatCard({ label, value, icon, accent }: { label: string; value: number
 function Modal({ children, onClose }: { children: React.ReactNode; onClose: () => void }) {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ background: "rgba(0,0,0,0.6)" }} onClick={onClose}>
-      <div className="w-full max-w-md rounded-2xl p-6 relative" style={{ background: "var(--nm-bg-card)", border: "1px solid var(--nm-border)" }}
+      <div className="w-full max-w-md rounded-2xl p-6 relative" style={{ background: "var(--nm-bg-surface)", border: "1px solid var(--nm-border)" }}
         onClick={(e) => e.stopPropagation()}>
         <button onClick={onClose} className="absolute top-4 right-4 opacity-40 hover:opacity-100" style={{ color: "var(--nm-text-muted)" }}>
           <X size={18} />
@@ -358,7 +358,7 @@ function Spinner() {
   return (
     <div className="flex items-center justify-center py-16">
       <div className="w-8 h-8 rounded-full border-2 border-t-transparent animate-spin"
-        style={{ borderColor: "var(--nm-accent, #6366f1)", borderTopColor: "transparent" }} />
+        style={{ borderColor: "var(--nm-purple)", borderTopColor: "transparent" }} />
     </div>
   );
 }
