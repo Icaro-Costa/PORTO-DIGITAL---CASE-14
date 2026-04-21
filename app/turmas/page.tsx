@@ -1,3 +1,4 @@
+"use client";
 import { LessonBuilderLayout } from "@/views/lesson-builder/LessonBuilderLayout";
 import { TurmasPage } from "@/views/turmas/TurmasPage";
 
