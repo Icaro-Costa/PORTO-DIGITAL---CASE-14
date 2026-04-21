@@ -110,6 +110,18 @@ export const useAuthStore = create<AuthState>()(
     {
       name: "neuromentor-auth",
       partialize: (s) => ({ user: s.user, token: s.token }),
+      merge: (persisted: unknown, current) => {
+        const p = persisted as typeof current;
+        return {
+          ...current,
+          ...p,
+          user: p.user ? {
+            isAiEnabled: false,
+            isAdmin: false,
+            ...p.user,
+          } : null,
+        };
+      },
     }
   )
 );
