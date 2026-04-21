@@ -168,6 +168,10 @@ export const api = {
     });
   },
 
+  deleteLesson(lessonId: string) {
+    return request<void>(`/api/lessons/${lessonId}`, { method: "DELETE" });
+  },
+
   mergeModules(lessonId: string, moduleIds: [string, string]) {
     return request<{ id: string; title: string; summary: string; concepts: string[]; match: number; status: string; order: number }>(
       `/api/lessons/${lessonId}/modules/merge`,

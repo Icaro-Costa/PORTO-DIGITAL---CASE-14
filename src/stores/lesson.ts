@@ -34,6 +34,7 @@ interface LessonState {
   setError: (error: string | null) => void;
   setModuleStatus: (moduleId: string, status: LessonModule["status"]) => void;
   mergeModules: (moduleId1: string, moduleId2: string) => Promise<{ ok: boolean; error?: string }>;
+  deleteLesson: (lessonId: string) => Promise<{ ok: boolean; error?: string }>;
   loadTeacherLessons: () => Promise<void>;
   loadStudentLessons: () => Promise<void>;
 }
@@ -128,6 +129,21 @@ export const useLessonStore = create<LessonState>()(
           return { ok: true };
         } catch (e) {
           return { ok: false, error: e instanceof Error ? e.message : "Erro ao mesclar." };
+        }
+      },
+
+      deleteLesson: async (lessonId) => {
+        try {
+          await api.deleteLesson(lessonId);
+          set((s) => {
+            const lessons = s.lessons.filter((l) => l.id !== lessonId);
+            const currentLesson =
+              s.currentLesson?.id === lessonId ? (lessons[0] ?? null) : s.currentLesson;
+            return { lessons, currentLesson };
+          });
+          return { ok: true };
+        } catch (e) {
+          return { ok: false, error: e instanceof Error ? e.message : "Erro ao deletar." };
         }
       },
 

@@ -4,7 +4,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { ReactNode, useEffect, useState, useRef } from "react";
 import {
   Upload, Cpu, ListChecks, FileText, LogOut, BookOpen,
-  MoreVertical, Users, ChevronDown, ClipboardCheck, Menu, X, ShieldCheck,
+  MoreVertical, Users, ChevronDown, ClipboardCheck, Menu, X, ShieldCheck, Trash2,
 } from "lucide-react";
 import { useAuthStore } from "@/stores/auth";
 import { useLessonStore } from "@/stores/lesson";
@@ -27,6 +27,7 @@ export function LessonBuilderLayout({ children }: { children: ReactNode }) {
   const lessons = useLessonStore((s) => s.lessons);
   const setCurrent = useLessonStore((s) => s.setCurrent);
   const loadTeacherLessons = useLessonStore((s) => s.loadTeacherLessons);
+  const deleteLesson = useLessonStore((s) => s.deleteLesson);
   const [showProfile, setShowProfile] = useState(false);
   const [open, setOpen] = useState(false);
   const touchStartX = useRef(0);
@@ -68,18 +69,29 @@ export function LessonBuilderLayout({ children }: { children: ReactNode }) {
       {lessons.length > 0 && (
         <div className="mb-4">
           <p className="text-xs font-semibold px-3 mb-2 tracking-wider" style={{ color: "var(--nm-text-muted)" }}>MATERIAL ATIVO</p>
-          <div className="relative px-1">
-            <select
-              value={currentLesson?.id ?? ""}
-              onChange={(e) => { const l = lessons.find((x) => x.id === e.target.value); if (l) setCurrent(l); }}
-              className="w-full px-3 py-2 rounded-lg text-xs appearance-none outline-none cursor-pointer pr-7"
-              style={{ background: "var(--nm-bg-elevated)", border: "1px solid var(--nm-border)", color: "white" }}
-            >
-              {lessons.map((l) => (
-                <option key={l.id} value={l.id} style={{ background: "#1a1a2e" }}>{l.title}</option>
-              ))}
-            </select>
-            <ChevronDown size={12} className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" style={{ color: "var(--nm-text-muted)" }} />
+          <div className="flex items-center gap-1 px-1">
+            <div className="relative flex-1">
+              <select
+                value={currentLesson?.id ?? ""}
+                onChange={(e) => { const l = lessons.find((x) => x.id === e.target.value); if (l) setCurrent(l); }}
+                className="w-full px-3 py-2 rounded-lg text-xs appearance-none outline-none cursor-pointer pr-7"
+                style={{ background: "var(--nm-bg-elevated)", border: "1px solid var(--nm-border)", color: "white" }}
+              >
+                {lessons.map((l) => (
+                  <option key={l.id} value={l.id} style={{ background: "#1a1a2e" }}>{l.title}</option>
+                ))}
+              </select>
+              <ChevronDown size={12} className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" style={{ color: "var(--nm-text-muted)" }} />
+            </div>
+            {currentLesson && (
+              <button
+                onClick={() => { if (confirm(`Apagar "${currentLesson.title}"?`)) deleteLesson(currentLesson.id); }}
+                className="p-1.5 rounded-lg hover:bg-red-500/10 transition-colors flex-shrink-0"
+                style={{ color: "var(--nm-text-muted)" }} title="Apagar arquivo"
+              >
+                <Trash2 size={13} />
+              </button>
+            )}
           </div>
         </div>
       )}
