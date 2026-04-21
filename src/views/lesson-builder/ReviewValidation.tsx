@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Star, X, Check, RotateCcw, AlertCircle, BookOpen } from "lucide-react";
+import { Star, X, Check, RotateCcw, AlertCircle, BookOpen, Merge } from "lucide-react";
 import { useLessonStore, type LessonModule } from "@/stores/lesson";
 
 type FilterKey = "all" | "pending" | "approved" | "rejected";
@@ -22,8 +22,10 @@ export function ReviewValidation() {
   const router = useRouter();
   const currentLesson = useLessonStore((s) => s.currentLesson);
   const setModuleStatus = useLessonStore((s) => s.setModuleStatus);
+  const mergeModules = useLessonStore((s) => s.mergeModules);
   const [filter, setFilter] = useState<FilterKey>("all");
   const [selected, setSelected] = useState<string[]>([]);
+  const [merging, setMerging] = useState(false);
 
   const modules = currentLesson?.modules ?? [];
 
@@ -41,6 +43,14 @@ export function ReviewValidation() {
 
   const bulkSetStatus = (status: LessonModule["status"]) => {
     selected.forEach((id) => setModuleStatus(id, status));
+    setSelected([]);
+  };
+
+  const handleMerge = async () => {
+    if (selected.length !== 2) return;
+    setMerging(true);
+    await mergeModules(selected[0], selected[1]);
+    setMerging(false);
     setSelected([]);
   };
 
@@ -138,6 +148,16 @@ export function ReviewValidation() {
               {selected.length} selecionado(s)
             </span>
             <div className="flex gap-2">
+              {selected.length === 2 && (
+                <button
+                  onClick={handleMerge}
+                  disabled={merging}
+                  className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium disabled:opacity-40"
+                  style={{ background: "rgba(234,179,8,0.15)", color: "#eab308", border: "1px solid rgba(234,179,8,0.3)" }}
+                >
+                  <Merge size={14} /> {merging ? "Mesclando..." : "Mesclar"}
+                </button>
+              )}
               <button
                 onClick={() => bulkSetStatus("rejected")}
                 className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium border"

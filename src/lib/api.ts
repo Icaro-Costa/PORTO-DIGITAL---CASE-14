@@ -168,6 +168,13 @@ export const api = {
     });
   },
 
+  mergeModules(lessonId: string, moduleIds: [string, string]) {
+    return request<{ id: string; title: string; summary: string; concepts: string[]; match: number; status: string; order: number }>(
+      `/api/lessons/${lessonId}/modules/merge`,
+      { method: "POST", body: JSON.stringify({ moduleIds }) }
+    );
+  },
+
   getAttempts(limit = 20) {
     return request<Array<{
       id: string; question: string; answer: string; isCorrect: boolean;

@@ -67,7 +67,7 @@ export function LessonBuilderLayout({ children }: { children: ReactNode }) {
 
       {lessons.length > 0 && (
         <div className="mb-4">
-          <p className="text-xs font-semibold px-3 mb-2 tracking-wider" style={{ color: "var(--nm-text-muted)" }}>AULA ATIVA</p>
+          <p className="text-xs font-semibold px-3 mb-2 tracking-wider" style={{ color: "var(--nm-text-muted)" }}>MATERIAL ATIVO</p>
           <div className="relative px-1">
             <select
               value={currentLesson?.id ?? ""}

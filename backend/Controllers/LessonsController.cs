@@ -172,6 +172,36 @@ public class LessonsController(AppDbContext db, ClaudeService claude, TextExtrac
         return Ok(MapModule(module));
     }
 
+    [HttpPost("{lessonId:guid}/modules/merge")]
+    public async Task<IActionResult> MergeModules(Guid lessonId, [FromBody] MergeModulesRequest req)
+    {
+        if (req.ModuleIds.Count != 2) return BadRequest(new { error = "Selecione exatamente 2 módulos." });
+        var teacherId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+        var lesson = await db.Lessons.Include(l => l.Modules).FirstOrDefaultAsync(l => l.Id == lessonId && l.TeacherId == teacherId);
+        if (lesson is null) return NotFound();
+
+        var mod1 = lesson.Modules.FirstOrDefault(m => m.Id == req.ModuleIds[0]);
+        var mod2 = lesson.Modules.FirstOrDefault(m => m.Id == req.ModuleIds[1]);
+        if (mod1 is null || mod2 is null) return BadRequest(new { error = "Módulos não encontrados." });
+
+        var merged = new LessonModule
+        {
+            LessonId = lessonId,
+            Title = $"{mod1.Title} & {mod2.Title}",
+            Summary = mod1.Summary + " " + mod2.Summary,
+            Concepts = mod1.Concepts.Concat(mod2.Concepts).Distinct().ToList(),
+            MatchScore = Math.Round((mod1.MatchScore + mod2.MatchScore) / 2, 2),
+            Order = Math.Min(mod1.Order, mod2.Order),
+            TextChunk = string.Join("\n\n", new[] { mod1.TextChunk, mod2.TextChunk }.Where(t => !string.IsNullOrWhiteSpace(t))),
+            Status = ModuleStatus.Pending,
+        };
+
+        db.LessonModules.RemoveRange(mod1, mod2);
+        db.LessonModules.Add(merged);
+        await db.SaveChangesAsync();
+        return Ok(MapModule(merged));
+    }
+
     [HttpDelete("{id:guid}")]
     public async Task<IActionResult> Delete(Guid id)
     {

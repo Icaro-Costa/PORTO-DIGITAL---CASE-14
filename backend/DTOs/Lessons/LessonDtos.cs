@@ -16,3 +16,5 @@ public record ModuleDto(
 );
 
 public record LessonUploadResponse(Guid LessonId, string Title, string Text, int Chars);
+
+public record MergeModulesRequest(List<Guid> ModuleIds);

@@ -33,6 +33,7 @@ interface LessonState {
   setStatus: (status: LessonStatus, progress?: number) => void;
   setError: (error: string | null) => void;
   setModuleStatus: (moduleId: string, status: LessonModule["status"]) => void;
+  mergeModules: (moduleId1: string, moduleId2: string) => Promise<{ ok: boolean; error?: string }>;
   loadTeacherLessons: () => Promise<void>;
   loadStudentLessons: () => Promise<void>;
 }
@@ -97,6 +98,36 @@ export const useLessonStore = create<LessonState>()(
         );
         if (currentLesson) {
           api.setModuleStatus(currentLesson.id, moduleId, status).catch(() => {});
+        }
+      },
+
+      mergeModules: async (moduleId1, moduleId2) => {
+        const { currentLesson } = get();
+        if (!currentLesson) return { ok: false, error: "Nenhuma aula ativa." };
+        try {
+          const merged = await api.mergeModules(currentLesson.id, [moduleId1, moduleId2]);
+          const newModule: LessonModule = {
+            id: merged.id, title: merged.title, summary: merged.summary,
+            concepts: merged.concepts, match: merged.match,
+            status: merged.status as LessonModule["status"],
+          };
+          set((s) => {
+            if (!s.currentLesson) return s;
+            const updated = {
+              ...s.currentLesson,
+              modules: [
+                ...s.currentLesson.modules.filter((m) => m.id !== moduleId1 && m.id !== moduleId2),
+                newModule,
+              ],
+            };
+            return {
+              currentLesson: updated,
+              lessons: s.lessons.map((l) => (l.id === updated.id ? updated : l)),
+            };
+          });
+          return { ok: true };
+        } catch (e) {
+          return { ok: false, error: e instanceof Error ? e.message : "Erro ao mesclar." };
         }
       },
 
