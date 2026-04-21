@@ -1,14 +1,10 @@
 "use client";
 import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
 import { Plus, Copy, Check, Users, BookOpen, Trash2, X, ChevronDown, ChevronRight, AlertTriangle } from "lucide-react";
-import { useAuthStore } from "@/stores/auth";
 import { useClassStore } from "@/stores/class";
 import { useLessonStore } from "@/stores/lesson";
 
 export function TurmasPage() {
-  const router = useRouter();
-  const user = useAuthStore((s) => s.user);
   const { classes, createClass, deleteClass, addLesson, removeLesson, loadTeacherClasses } = useClassStore();
   const lessons = useLessonStore((s) => s.lessons);
 
@@ -23,12 +19,8 @@ export function TurmasPage() {
   const [deleting, setDeleting] = useState(false);
 
   useEffect(() => {
-    if (!user) { router.replace("/login"); return; }
-    if (user.role === "student") { router.replace("/dashboard"); return; }
     loadTeacherClasses();
-  }, [user, router, loadTeacherClasses]);
-
-  if (!user || user.role === "student") return null;
+  }, [loadTeacherClasses]);
 
   const approvedLessons = lessons.filter((l) => l.modules.some((m) => m.status === "approved"));
 
