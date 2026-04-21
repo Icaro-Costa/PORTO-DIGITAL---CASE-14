@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
-import { List, Minus, Plus, Search, MoreVertical, Send, Paperclip, Sparkles, Loader } from "lucide-react";
+import { List, Minus, Plus, Search, MoreVertical, Send, Paperclip, Sparkles, Loader, FileText, MessageSquare } from "lucide-react";
 import { useLessonStore } from "@/stores/lesson";
 import { BACKEND_URL } from "@/lib/api";
 
@@ -17,6 +17,7 @@ export function PDFViewer() {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [streaming, setStreaming] = useState(false);
   const [zoom] = useState(125);
+  const [mobileTab, setMobileTab] = useState<"material" | "chat">("chat");
   const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -81,8 +82,31 @@ export function PDFViewer() {
   const snippet = currentLesson?.rawText?.slice(0, 1800) ?? "";
 
   return (
-    <div className="flex h-full neuromentor" style={{ background: "var(--nm-bg-base)" }}>
-      <div className="flex-1 flex flex-col overflow-hidden" style={{ borderRight: "1px solid var(--nm-border)" }}>
+    <div className="flex flex-col h-full neuromentor" style={{ background: "var(--nm-bg-base)" }}>
+
+      {/* Mobile tab bar */}
+      <div className="flex md:hidden flex-shrink-0" style={{ borderBottom: "1px solid var(--nm-border)", background: "var(--nm-bg-surface)" }}>
+        <button
+          onClick={() => setMobileTab("material")}
+          className="flex-1 flex items-center justify-center gap-2 py-3 text-sm font-medium transition-colors"
+          style={{ color: mobileTab === "material" ? "var(--nm-purple-light)" : "var(--nm-text-muted)", borderBottom: mobileTab === "material" ? "2px solid var(--nm-purple)" : "2px solid transparent" }}
+        >
+          <FileText size={15} /> Material
+        </button>
+        <button
+          onClick={() => setMobileTab("chat")}
+          className="flex-1 flex items-center justify-center gap-2 py-3 text-sm font-medium transition-colors"
+          style={{ color: mobileTab === "chat" ? "var(--nm-purple-light)" : "var(--nm-text-muted)", borderBottom: mobileTab === "chat" ? "2px solid var(--nm-purple)" : "2px solid transparent" }}
+        >
+          <MessageSquare size={15} /> Chat
+        </button>
+      </div>
+
+      <div className="flex flex-1 overflow-hidden">
+      <div
+        className={`${mobileTab === "material" ? "flex" : "hidden"} md:flex flex-1 flex-col overflow-hidden`}
+        style={{ borderRight: "1px solid var(--nm-border)" }}
+      >
         <div
           className="flex items-center gap-3 px-4 py-3 flex-shrink-0"
           style={{ borderBottom: "1px solid var(--nm-border)", background: "var(--nm-bg-surface)" }}
@@ -141,7 +165,10 @@ export function PDFViewer() {
         </div>
       </div>
 
-      <div className="w-80 flex-shrink-0 flex flex-col" style={{ background: "var(--nm-bg-surface)" }}>
+      <div
+        className={`${mobileTab === "chat" ? "flex" : "hidden"} md:flex w-full md:w-80 flex-shrink-0 flex-col`}
+        style={{ background: "var(--nm-bg-surface)" }}
+      >
         <div
           className="flex items-center justify-between px-4 py-3 flex-shrink-0"
           style={{ borderBottom: "1px solid var(--nm-border)" }}
@@ -246,6 +273,7 @@ export function PDFViewer() {
             IA pode errar. Verifique informações críticas.
           </p>
         </div>
+      </div>
       </div>
     </div>
   );
