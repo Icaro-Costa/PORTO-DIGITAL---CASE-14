@@ -52,10 +52,18 @@ builder.Services.AddControllers();
 
 var allowedOrigins = builder.Configuration.GetSection("AllowedOrigins").Get<string[]>() ?? [];
 builder.Services.AddCors(opt => opt.AddDefaultPolicy(p =>
-    p.WithOrigins(allowedOrigins)
-     .AllowAnyHeader()
-     .AllowAnyMethod()
-     .AllowCredentials()));
+    p.SetIsOriginAllowed(origin =>
+    {
+        var uri = new Uri(origin);
+        // Allow configured origins + all Vercel preview deployments
+        return allowedOrigins.Contains(origin) ||
+               uri.Host.EndsWith(".vercel.app") ||
+               uri.Host == "localhost" ||
+               uri.Host.StartsWith("localhost:");
+    })
+    .AllowAnyHeader()
+    .AllowAnyMethod()
+    .AllowCredentials()));
 
 // ── App pipeline ──────────────────────────────────────────────────────────
 var app = builder.Build();
