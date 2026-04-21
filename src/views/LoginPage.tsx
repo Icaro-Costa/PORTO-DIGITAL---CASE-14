@@ -118,12 +118,23 @@ export function LoginPage() {
         </div>
       </div>
 
-      <div className="w-1/2 flex flex-col items-center justify-center px-16 py-10 relative overflow-hidden" style={{ background: "var(--nm-bg-base)" }}>
-        <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse at 50% 40%, rgba(124,58,237,0.15), transparent 70%)" }} />
-        <h2 className="text-3xl font-bold text-white text-center mb-4">Acelere seu aprendizado</h2>
-        <p className="text-center text-sm max-w-sm" style={{ color: "var(--nm-text-muted)" }}>
-          Milhares de estudantes dominando habilidades complexas com mentoria personalizada por IA.
-        </p>
+      <div className="hidden md:flex w-1/2 flex-col items-center justify-center px-16 py-10 relative overflow-hidden" style={{ background: "var(--nm-bg-base)" }}>
+        <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse at 50% 40%, rgba(124,58,237,0.18), transparent 70%)" }} />
+        <div className="relative z-10 w-full max-w-sm space-y-4">
+          {[
+            { icon: "🎓", title: "Aulas personalizadas", desc: "O mentor adapta o conteúdo ao seu ritmo e estilo de aprendizado." },
+            { icon: "💬", title: "Chat com o material", desc: "Tire dúvidas diretamente sobre o PDF da aula em tempo real." },
+            { icon: "✏️", title: "Exercícios gerados por IA", desc: "Pratique com questões criadas a partir do conteúdo da sua turma." },
+          ].map((item) => (
+            <div key={item.title} className="flex items-start gap-4 p-4 rounded-2xl" style={{ background: "var(--nm-bg-surface)", border: "1px solid var(--nm-border)" }}>
+              <span className="text-2xl flex-shrink-0">{item.icon}</span>
+              <div>
+                <p className="text-sm font-semibold text-white">{item.title}</p>
+                <p className="text-xs mt-0.5" style={{ color: "var(--nm-text-muted)" }}>{item.desc}</p>
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );
